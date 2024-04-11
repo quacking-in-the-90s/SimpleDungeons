@@ -4,6 +4,8 @@ extends Node3D
 
 enum BuildStage { PLACE_ROOMS = 0, PLACE_STAIRS = 1, SEPARATE_ROOMS = 2, CONNECT_ROOMS = 3, SPAWN_ROOMS = 4, DONE = 5 }
 var stage : BuildStage = BuildStage.DONE
+@export var initial_room_scene : PackedScene 
+var initial_room_placed = false
 
 @export var dungeon_kit_scene : PackedScene :
 	set(value):
@@ -37,6 +39,9 @@ var _editor_aabb_cube_visual : Node3D
 
 var _rooms_container : Node3D
 func create_or_recreate_rooms_container():
+	if initial_room_placed != true:
+		print ("Hello")
+		initial_room_placed = true
 	if get_node_or_null("RoomsContainer"):
 		var rc = get_node_or_null("RoomsContainer")
 		remove_child(rc)
