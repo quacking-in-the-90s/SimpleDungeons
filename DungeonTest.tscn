@@ -1,9 +1,8 @@
-[gd_scene load_steps=9 format=3 uid="uid://ba3rkgbyxsyo0"]
+[gd_scene load_steps=8 format=3 uid="uid://ba3rkgbyxsyo0"]
 
 [ext_resource type="PackedScene" uid="uid://bv2uohnyybge6" path="res://InitialRoom.tscn" id="2_tyus5"]
 [ext_resource type="PackedScene" uid="uid://b2c2jvx5vsfc0" path="res://addons/SimpleDungeons/SampleDungeonKitWithModels.tscn" id="3_bl7i8"]
 [ext_resource type="Script" path="res://addons/SimpleDungeons/DungeonGenerator.gd" id="3_dysek"]
-[ext_resource type="PackedScene" uid="uid://g407w5bbx5ci" path="res://entities/Player/Player.tscn" id="3_efbs5"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_ga1mx"]
 sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
@@ -35,9 +34,9 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -130.516)
 script = ExtResource("3_dysek")
 initial_room_scene = ExtResource("2_tyus5")
 dungeon_kit_scene = ExtResource("3_bl7i8")
+dungeon_size = Vector3i(12, 4, 12)
+generate_seed = 10
 generate_threaded = true
-
-[node name="Player" parent="." instance=ExtResource("3_efbs5")]
 
 [node name="CSGBox3D" type="CSGBox3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.93937, 0)

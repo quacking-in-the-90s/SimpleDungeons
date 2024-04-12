@@ -4,6 +4,7 @@ extends Node3D
 
 enum BuildStage { PLACE_ROOMS = 0, PLACE_STAIRS = 1, SEPARATE_ROOMS = 2, CONNECT_ROOMS = 3, SPAWN_ROOMS = 4, DONE = 5 }
 var stage : BuildStage = BuildStage.DONE
+
 @export var initial_room_scene : PackedScene 
 var initial_room_placed = false
 
@@ -38,10 +39,25 @@ var dungeon_kit_inst : DungeonKit
 var _editor_aabb_cube_visual : Node3D
 
 var _rooms_container : Node3D
+
+func _place_initial_room():
+	if not initial_room_scene:
+		printerr("Initial room scene is not set.")
+		return
+	
+	print("Initial room scene path:", initial_room_scene.get_path())
+	
+	# Create an instance of the scene
+	var initial_room_instance = initial_room_scene.instantiate()
+	
+	# Add the instance to the rooms container
+	_rooms_container.add_child(initial_room_instance)
+	print(_rooms_container)
+	print("Initial room placed successfully")
+
+
 func create_or_recreate_rooms_container():
-	if initial_room_placed != true:
-		print ("Hello")
-		initial_room_placed = true
+	
 	if get_node_or_null("RoomsContainer"):
 		var rc = get_node_or_null("RoomsContainer")
 		remove_child(rc)
@@ -51,6 +67,10 @@ func create_or_recreate_rooms_container():
 	_rooms_container = Node3D.new()
 	_rooms_container.position = Vector3(dungeon_size) * dungeon_kit_inst.grid_voxel_size / -2
 	_rooms_container.name = "RoomsContainer"
+	if initial_room_placed != true:
+		#_place_initial_room()
+		initial_room_placed = true
+	
 	_rooms = [] as Array[DungeonRoom]
 	_room_counts = {}
 	_floors_graphs = []
@@ -91,6 +111,9 @@ func generate(seed_override = null):
 func start_generate_loop():
 	stage = BuildStage.PLACE_ROOMS
 	create_or_recreate_rooms_container()
+	if not initial_room_placed:
+		#_place_initial_room()
+		initial_room_placed = true
 	var success_placing = place_rooms_and_stairs()
 	if success_placing:
 		print("Success placing")
@@ -156,11 +179,22 @@ func _process(delta):
 
 func place_rooms_and_stairs() -> bool:
 	stage = BuildStage.PLACE_ROOMS
+	print (stage)
+	print(BuildStage.PLACE_ROOMS)
+	print(placed_minimum_rooms())
+	print(get_random_room())
+	print(get_random_room())
+	print(get_random_room()) 
+	print(get_random_room())
+	print(get_random_room())
 	while not placed_minimum_rooms():
 		var room = get_random_room()
 		var rand_pos = get_rand_pos_for_room(room)
 		duplicate_and_place_room(room, rand_pos)
 	stage += 1
+	
+	#connect_initial_room()
+	
 	while not all_floors_connected():
 		var connect_result = try_connect_floors_with_stair()
 		if not connect_result:
@@ -168,6 +202,24 @@ func place_rooms_and_stairs() -> bool:
 	build_rooms_on_each_floor_arr()
 	stage += 1
 	return true
+
+func connect_initial_room():
+	var initial_room = _rooms[0] # Assuming the initial room is the first room placed
+	var target_room = _rooms[1] # Connect the initial room to the second room placed
+	
+	# Get doors of the initial room and the target room
+	var initial_room_doors = initial_room.get_doors()
+	var target_room_doors = target_room.get_doors()
+	
+	# Assuming there's only one door in each room for simplicity
+	var initial_room_door = initial_room_doors[0]
+	var target_room_door = target_room_doors[0]
+	
+	# Connect the doors
+	initial_room.connect_door(initial_room_door, target_room_door)
+	target_room.connect_door(target_room_door, initial_room_door)
+
+
 
 func claim_node_ownership_recur(node, owner = null):
 	if owner == null:
@@ -284,8 +336,12 @@ func placed_minimum_rooms() -> bool:
 	return len(_get_rooms_under_min_count()) == 0
 
 func get_random_room() -> DungeonRoom:
+
+	
 	var rooms_to_place := _get_rooms_under_min_count().filter(func(room): return _room_counts[room] < room.max_count)
 	return rooms_to_place[_rng.randi_range(0, len(rooms_to_place) - 1)]
+	
+	
 
 func duplicate_and_place_room(room : DungeonRoom, grid_pos : Vector3i, constrain : bool = true) -> DungeonRoom:
 	var dupe = room.make_duplicate()
