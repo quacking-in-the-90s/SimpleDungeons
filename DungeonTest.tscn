@@ -35,7 +35,7 @@ script = ExtResource("3_dysek")
 initial_room_scene = ExtResource("2_tyus5")
 dungeon_kit_scene = ExtResource("3_bl7i8")
 dungeon_size = Vector3i(12, 4, 12)
-generate_seed = 10
+generate_seed = 23
 generate_threaded = true
 
 [node name="CSGBox3D" type="CSGBox3D" parent="."]

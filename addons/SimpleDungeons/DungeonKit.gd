@@ -54,4 +54,5 @@ func get_rooms() -> Array[DungeonRoom]:
 		rooms.push_back(room)
 		# Some glue to get the kit system to work. Can't set in _init without spawning into scene
 		room.dungeon_kit = self
+	print(rooms)
 	return rooms

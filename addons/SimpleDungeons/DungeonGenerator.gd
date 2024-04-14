@@ -114,7 +114,9 @@ func start_generate_loop():
 	if not initial_room_placed:
 		#_place_initial_room()
 		initial_room_placed = true
-	var success_placing = place_rooms_and_stairs()
+	var success_placing = place_rooms_and_stairs() and is_inside_tree()
+	print (success_placing)
+	print("hello")
 	if success_placing:
 		print("Success placing")
 	else:
@@ -187,11 +189,18 @@ func place_rooms_and_stairs() -> bool:
 	print(get_random_room()) 
 	print(get_random_room())
 	print(get_random_room())
+	print(get_random_room())
+	print(get_random_room())
+	print(get_random_room()) 
+	print(get_random_room())
+	print(get_random_room())
 	while not placed_minimum_rooms():
 		var room = get_random_room()
 		var rand_pos = get_rand_pos_for_room(room)
 		duplicate_and_place_room(room, rand_pos)
 	stage += 1
+	print(stage)
+
 	
 	#connect_initial_room()
 	
